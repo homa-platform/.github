@@ -83,9 +83,9 @@ model's context only on the turns that need it.
 | Time series | influxdb-mcp |
 | Exchange rates | fx-mcp |
 | Documents: PDF, scans, office files | docs-mcp, on [Apache Tika](https://github.com/apache/tika) with OCR |
-| Long-term memory | X-Ray |
+| Long-term memory | [X-Ray](https://github.com/triageagent-dev/x-ray) |
 
-**Memory.** X-Ray keeps what is worth remembering between conversations. The
+**Memory.** [X-Ray](https://github.com/triageagent-dev/x-ray) keeps what is worth remembering between conversations. The
 agent recalls from it before a turn and writes to it through a skill; personal
 identifiers are refused at the door.
 
