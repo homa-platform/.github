@@ -20,22 +20,22 @@ optional and switches on with configuration.
 ```mermaid
 flowchart TB
     voice["Voice boards<br/>ESP32-S3"]
-    chat["Telegram · e-mail"]
-    ww["homa-wakeword<br/>trains the wake-word model"]
+    chat["Telegram, e-mail"]
+    ww["homa-wakeword<br/>trains the model<br/>for the wake word"]
 
-    agent["<b>homa-agent</b><br/>conversations · skills · tools<br/>calendar · timers · tasks · archive<br/>redact: placeholders for personal data"]
+    agent["<b>homa-agent</b><br/>conversations, skills, tools<br/>calendar, timers, archive<br/>redaction of personal data"]
 
-    llm["LLM gateway<br/>cloud chat models,<br/>then a local one"]
-    local["Local models<br/>speech-to-text · text-to-speech<br/>privacy checks"]
-    mcp["MCP gateway<br/>web search · Grafana · InfluxDB<br/>exchange rates · documents · memory"]
+    llm["LLM gateway<br/>cloud chat models,<br/>a local one as fallback"]
+    local["Local models<br/>speech to text<br/>text to speech<br/>privacy checks"]
+    mcp["MCP gateway<br/>web search, Grafana<br/>InfluxDB, exchange rates<br/>documents, memory"]
     ego["ego<br/>scores every turn"]
 
     ww -. "model" .-> voice
-    voice <-- "audio · HTTP + WebSocket" --> agent
+    voice <-- "audio" --> agent
     chat <--> agent
     agent -- "chat" --> llm
     agent -- "speech" --> local
-    agent -- "tools · MCP" --> mcp
+    agent -- "tools" --> mcp
     agent -- "traces" --> ego
     llm --> local
     ego -- "judge" --> local
