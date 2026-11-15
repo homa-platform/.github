@@ -18,46 +18,27 @@ optional and switches on with configuration.
 ## How it fits together
 
 ```mermaid
-flowchart LR
-    subgraph people["People"]
-        voice["Voice board<br/>ESP32-S3"]
-        tg["Telegram"]
-        mail["E-mail"]
-    end
+flowchart TB
+    voice["Voice boards<br/>ESP32-S3"]
+    chat["Telegram · e-mail"]
+    ww["homa-wakeword<br/>trains the wake-word model"]
 
-    subgraph core["homa-agent"]
-        agent["conversations · skills · tools<br/>calendar · timers · tasks · archive"]
-        redact["redact<br/>placeholders for personal data"]
-    end
+    agent["<b>homa-agent</b><br/>conversations · skills · tools<br/>calendar · timers · tasks · archive<br/>redact: placeholders for personal data"]
 
-    subgraph models["Models"]
-        llmgw["LLM gateway<br/>one name, a failover chain"]
-        cloud["cloud chat models"]
-        local["local server<br/>chat · speech-to-text · text-to-speech"]
-    end
+    llm["LLM gateway<br/>cloud chat models,<br/>then a local one"]
+    local["Local models<br/>speech-to-text · text-to-speech<br/>privacy checks"]
+    mcp["MCP gateway<br/>web search · Grafana · InfluxDB<br/>exchange rates · documents · memory"]
+    ego["ego<br/>scores every turn"]
 
-    subgraph tools["MCP gateway"]
-        web["web search"]
-        graf["Grafana"]
-        influx["InfluxDB"]
-        fx["exchange rates"]
-        docs["docs-mcp<br/>PDF · OCR"]
-        xray["X-Ray<br/>memory"]
-    end
-
-    voice <-- "audio in, audio out<br/>HTTP + WebSocket" --> agent
-    tg <--> agent
-    mail <--> agent
-    agent -- "chat (OpenAI API)" --> llmgw
-    llmgw --> cloud
-    llmgw --> local
-    agent -- "speech both ways" --> local
-    agent <--> redact
-    redact -- "what is personal here?" --> local
-    agent -- "MCP, Streamable HTTP" --> tools
-    agent -- "OpenTelemetry traces" --> ego["ego<br/>scores every turn"]
+    ww -. "model" .-> voice
+    voice <-- "audio · HTTP + WebSocket" --> agent
+    chat <--> agent
+    agent -- "chat" --> llm
+    agent -- "speech" --> local
+    agent -- "tools · MCP" --> mcp
+    agent -- "traces" --> ego
+    llm --> local
     ego -- "judge" --> local
-    ww["homa-wakeword<br/>training"] -. "wake-word model" .-> voice
 ```
 
 **A turn.** A person says the wake word or writes a message. A voice board
